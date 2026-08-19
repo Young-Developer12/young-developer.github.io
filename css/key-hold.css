@@ -1,0 +1,246 @@
+.key-hold {
+opacity: 0;
+}
+
+.key-hold.visible {
+opacity: 1;
+}
+
+.key-hold * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.key-hold button:focus-visible {
+  outline: 2px solid #4a90e2 !important;
+  outline: -webkit-focus-ring-color auto 5px !important;
+}
+
+.key-hold a {
+  text-decoration: none;
+}
+
+.key-hold {
+  display: flex;
+  flex-direction: column;
+  width: 499px;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+}
+
+.key-hold .div {
+  display: inline-flex;
+  align-items: center;
+  gap: 29px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.key-hold .div-wrapper-key {
+  position: relative;
+  width: 98px;
+  height: 98px;
+  background-color: #00000094;
+  border-radius: 8.31px;
+  overflow: hidden;
+  border: 0.83px solid;
+  border-color: #565656;
+  backdrop-filter: blur(3.58px) brightness(100%);
+  -webkit-backdrop-filter: blur(3.58px) brightness(100%);
+}
+
+.key-hold .text-wrapper-keys {
+  position: absolute;
+  width: 35px;
+  top: 23px;
+  left: 31px;
+  color: #5b5b5b;
+  font-size: 37.5px;
+  font-family: "Gotham Pro", Helvetica;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.key-hold .div-2 {
+  position: relative;
+  width: 98px;
+  height: 98px;
+  border-radius: 8.31px;
+  overflow: hidden;
+  border: 0.83px solid;
+  border-color: #565656;
+  backdrop-filter: blur(3.58px) brightness(100%);
+  -webkit-backdrop-filter: blur(3.58px) brightness(100%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(91, 91, 91, 0.72) 0%, rgba(19, 19, 19, 0.72) 100%);
+}
+
+.key-hold .text-wrapper-key-main {
+  position: absolute;
+  width: 35px;
+  top: 21px;
+  left: 31px;
+  background: linear-gradient(180deg, rgba(253, 213, 129, 1) 0%, rgba(255, 185, 55, 1) 100%);
+  -webkit-background-clip: text !important;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Gotham Pro", Helvetica;
+  font-weight: 500;
+  color: transparent;
+  font-size: 37.5px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.key-hold .overlap-group-key {
+  position: absolute;
+  width: 98px;
+  height: 12px;
+  top: 89px;
+  left: 0;
+  background-color: #5B5B5B;
+}
+
+.key-hold .rectangle-key {
+  width: 0px;
+  height: 12px;
+  background-color: #ffb937;
+}
+
+.key-hold .polygon {
+  position: absolute;
+  width: 18px;
+  height: 11px;
+  top: 0;
+  left: 40px;
+}
+
+.key-hold .p {
+  position: relative;
+  width: 545px;
+  margin-left: -23px;
+  margin-right: -23px;
+  color: #c9c9c9;
+  font-size: 18px;
+  font-family: "Gotham Pro", Helvetica;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+@media (max-width: 768px) {
+  .key-hold {
+    width: 90vw;
+    gap: 15px;
+  }
+  .key-hold .div {
+    gap: 20px;
+  }
+  .key-hold .div-wrapper-key,
+  .key-hold .div-2 {
+    width: 70px;
+    height: 70px;
+  }
+  .key-hold .text-wrapper,
+  .key-hold .text-wrapper-2 {
+    font-size: 28px;
+    top: 17px;
+    left: 21px;
+    width: 28px;
+  }
+  .key-hold .overlap-group-key {
+    width: 70px;
+    height: 8px;
+    top: 62px;
+  }
+  .key-hold .rectangle-key {
+    height: 8px;
+  }
+  .key-hold .polygon {
+    width: 14px;
+    height: 8px;
+    left: 28px;
+  }
+  .key-hold .p {
+    font-size: 14px;
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .key-hold {
+    width: 95vw;
+    gap: 10px;
+  }
+  .key-hold .div {
+    gap: 15px;
+  }
+  .key-hold .div-wrapper-key,
+  .key-hold .div-2 {
+    width: 60px;
+    height: 60px;
+  }
+  .key-hold .text-wrapper,
+  .key-hold .text-wrapper-2 {
+    font-size: 22px;
+    top: 14px;
+    left: 17px;
+    width: 26px;
+  }
+  .key-hold .overlap-group-key {
+    width: 60px;
+    height: 6px;
+    top: 52px;
+  }
+  .key-hold .rectangle-key {
+    height: 6px;
+  }
+  .key-hold .polygon {
+    width: 12px;
+    height: 7px;
+    left: 24px;
+  }
+  .key-hold .p {
+    font-size: 12px;
+    width: 100%;
+    margin: 0;
+  }
+}
+
+.key-hold .text-fade {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.key-hold .text-hidden {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.key-hold .text-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.key-hold .ellipse-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(30%);
+  width: 850px;
+  height: 200px;
+  background-color: #131313;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 1;
+  z-index: -1;
+}

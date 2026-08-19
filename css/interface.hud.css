@@ -1,0 +1,581 @@
+.nhud-root {
+    --nhud-anim-duration: 250ms;
+    --nhud-anim-easing: ease;
+
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: transparent;
+
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--nhud-anim-duration) var(--nhud-anim-easing),
+        visibility 0s linear var(--nhud-anim-duration);
+}
+
+.nhud-root--visible {
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--nhud-anim-duration) var(--nhud-anim-easing),
+        visibility 0s linear 0s;
+}
+
+.nhud-root,
+.nhud-root *,
+.nhud-root *::before,
+.nhud-root *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.nhud-root .nhud-layer {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.nhud-root .nhud-radar,
+.nhud-root .nhud-location,
+.nhud-root .nhud-weapon {
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--nhud-anim-duration) var(--nhud-anim-easing),
+        visibility 0s linear 0s;
+}
+
+.nhud-root--compact .nhud-radar,
+.nhud-root--compact .nhud-location,
+.nhud-root .nhud-weapon--hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--nhud-anim-duration) var(--nhud-anim-easing),
+        visibility 0s linear var(--nhud-anim-duration);
+}
+
+.nhud-root .nhud-logo {
+    display: inline-flex;
+    height: 7.5vh;
+    align-items: center;
+    gap: 1vw;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    right: -5vw;
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.nhud-root .nhud-meta {
+    display: flex;
+    flex-direction: column;
+    width: 6.5vw;
+    align-items: flex-end;
+    gap: 0.5vh;
+    position: relative;
+}
+
+.nhud-root .nhud-nick {
+    position: relative;
+    align-self: stretch;
+    width: 100%;
+    height: 1.3vh;
+}
+
+.nhud-root .nhud-nick__text {
+    position: absolute;
+    right: -6vw;
+    top: -0.1vh;
+    text-shadow: 0 0 1vw rgb(0 0 0 / 73%);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 0.8vw;
+    text-align: right;
+    white-space: nowrap;
+    line-height: normal;
+}
+
+.nhud-root .nhud-time {
+    position: relative;
+    width: 3.5vw;
+    height: 1.3vh;
+}
+
+.nhud-root .nhud-time__text {
+    position: absolute;
+    width: 100%;
+    top: -0.1vh;
+    left: 6vw;
+    text-shadow: 0 0 1vw rgb(0 0 0 / 73%);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 0.8vw;
+    text-align: right;
+    white-space: nowrap;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.nhud-root .nhud-id {
+    position: relative;
+    width: 4vw;
+    height: 1.3vh;
+}
+
+.nhud-root .nhud-id__text {
+    position: absolute;
+    width: 100%;
+    top: -0.1vh;
+    left: 6vw;
+    text-shadow: 0 0 1vw rgb(0 0 0 / 73%);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 0.8vw;
+    text-align: right;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.nhud-root .nhud-logo__img {
+    position: relative;
+    width: 20vw;
+    height: 5.4vh;
+    margin-top: 0.5vh;
+    margin-bottom: -0.5vh;
+    margin-right: -0.6vw;
+    object-fit: contain;
+    filter: drop-shadow(0px 0px 0.6vw rgba(0, 0, 0, 0.25));
+}
+
+.nhud-root .nhud-health {
+    position: absolute;
+    width: 10.5vw;
+    height: 2.5vh;
+    top: 8vh;
+    right: 1vw;
+}
+
+.nhud-root .nhud-armor {
+    position: absolute;
+    width: 10.5vw;
+    height: 2.5vh;
+    top: 11.5vh;
+    right: 1vw;
+}
+
+.nhud-root .nhud-bar__value {
+    position: absolute;
+    width: 2vw;
+    top: -0.1vh;
+    left: -0.6vh;
+    text-shadow: 0 0 0.7vw rgba(0, 0, 0, 0.44);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 1.1vw;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.nhud-root .nhud-health__icon {
+    position: absolute;
+    width: 1vw;
+    height: 1.7vh;
+    top: 0.4vh;
+    left: 9.5vw;
+}
+
+.nhud-root .nhud-bar__track {
+    position: absolute;
+    width: 7vw;
+    height: 0.7vh;
+    top: 0.9vh;
+    left: 2vw;
+    background-color: #ffffff;
+    border-radius: 100px;
+}
+
+.nhud-root .nhud-health__fill {
+    position: absolute;
+    width: 4.4vw;
+    height: 0.7vh;
+    left: 0;
+    background-color: #e94545;
+    border-radius: 100px;
+    transition: width 0.25s ease;
+}
+
+.nhud-root .nhud-armor__icon-wrap {
+    position: absolute;
+    width: 1vw;
+    height: 1.9vh;
+    top: 0.3vh;
+    left: 9.5vw;
+}
+
+.nhud-root .nhud-armor__icon {
+    position: absolute;
+    width: 0.8vw;
+    height: 1.8vh;
+    top: 0;
+    left: 0.1vw;
+}
+
+.nhud-root .nhud-armor__fill {
+    position: absolute;
+    width: 4.4vw;
+    height: 0.7vh;
+    left: 0;
+    background-color: #9c9c9c;
+    border-radius: 100px;
+    transition: width 0.25s ease;
+}
+
+.nhud-root .nhud-money {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5vw;
+    position: absolute;
+    top: 15.5vh;
+    right: 1vw;
+}
+
+.nhud-root .nhud-money__text {
+    position: relative;
+    height: 2.5vh;
+    margin-top: -0.1vh;
+    text-shadow: 0 0 0.7vw rgba(0, 0, 0, 0.44);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 1.1vw;
+    text-align: right;
+    letter-spacing: 0;
+    line-height: normal;
+    right: 0.4vw;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: unset;
+    max-width: none;
+}
+
+.nhud-root .nhud-money__icon {
+    position: relative;
+    width: 1.4vw;
+    height: 2.5vh;
+}
+
+.nhud-root .nhud-weapon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9vw;
+    position: absolute;
+    top: 20.4vh;
+    right: 1vw;
+}
+
+.nhud-root .nhud-weapon__img {
+    position: relative;
+    width: 5.7vw;
+    height: 4.2vh;
+}
+
+.nhud-root .nhud-ammo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4vw;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.nhud-root .nhud-ammo__text {
+    position: relative;
+    width: 3.5vw;
+    height: 1.9vh;
+    text-shadow: 0 0 0.7vw rgba(0, 0, 0, 0.44);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: transparent;
+    font-size: 1.1vw;
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nhud-root .nhud-ammo__current {
+    color: #ffffff;
+}
+
+.nhud-root .nhud-ammo__max {
+    color: #b2b2b2;
+}
+
+.nhud-root .nhud-ammo__bullet {
+    position: relative;
+    width: 0.4vw;
+    height: 2vh;
+    overflow: hidden;
+    transform: rotate(15deg);
+}
+
+.nhud-root .nhud-ammo__icon {
+    width: 0.45vw;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 0.3vw rgba(0, 0, 0, 0.5));
+}
+
+.nhud-root .nhud-radar {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 1vw;
+    position: absolute;
+    bottom: 2vh;
+    left: 1.5vw;
+}
+
+.nhud-root .nhud-radar__map {
+    display: inline-flex;
+    position: relative;
+    width: 16.1vw;
+    right: 0.8vh;
+    top: 1vh;
+    height: 28vh;
+    background-image: url('../images/radar.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.nhud-root .nhud-hints {
+    display: flex;
+    flex-direction: column;
+    width: 16vw;
+    align-items: flex-start;
+    gap: 1.4vh;
+    position: relative;
+    right: 1.2vh;
+}
+
+.nhud-root .nhud-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5vw;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.nhud-root .nhud-hint--wide {
+    display: flex;
+    align-self: stretch;
+    width: 100%;
+}
+
+.nhud-root .nhud-hint__key {
+    position: relative;
+    width: 1.7vw;
+    height: 3vh;
+    border-radius: 0.22vw;
+    overflow: hidden;
+
+    backdrop-filter: blur(0.22vw) brightness(100%);
+    -webkit-backdrop-filter: blur(0.22vw) brightness(100%);
+
+    background: radial-gradient(
+        72% 72% at 50% 60%,
+        rgba(85, 85, 85, 0.7) 0%,
+        rgba(25, 25, 25, 0.7) 100%
+    );
+}
+
+.nhud-root .nhud-hint__key-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.nhud-root .nhud-hint__label {
+    position: relative;
+    width: fit-content;
+    text-shadow: 0 0 0.67vw rgba(0, 0, 0, 0.57);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 0.81vw;
+    letter-spacing: 0;
+    line-height: normal;
+    text-align: left;
+}
+
+.nhud-root .nhud-location {
+    position: absolute;
+    width: 14vw;
+    height: 4.8vh;
+    bottom: 30vh;
+    left: 1.5vw;
+}
+
+.nhud-root .nhud-location__icon {
+    position: absolute;
+    width: 2.1vw;
+    height: 3.8vh;
+    top: 1.1vh;
+    left: -12.5px;
+}
+
+.nhud-root .nhud-location__text {
+    position: absolute;
+    width: 11.9vw;
+    height: 4.8vh;
+    top: 6.6px;
+    left: 1.6vw;
+}
+
+.nhud-root .nhud-location__city {
+    position: absolute;
+    top: -0.1vh;
+    left: 0;
+    text-shadow: 0 0 0.78vw rgba(0, 0, 0, 0.45);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 1.1vw;
+    text-align: left;
+    white-space: nowrap;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.nhud-root .nhud-location__street {
+    position: absolute;
+    width: 100%;
+    top: 2.5vh;
+    left: 0;
+    text-shadow: 0 0 0.78vw rgba(0, 0, 0, 0.45);
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    color: #bebebe;
+    font-size: 0.94vw;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+@media (max-width: 768px) {
+    .nhud-root .nhud-logo {
+        top: 0;
+        right: 0;
+        height: 8vh;
+    }
+    .nhud-root .nhud-health {
+        top: 13vh;
+        right: 2vw;
+    }
+    .nhud-root .nhud-armor {
+        top: 16.5vh;
+        right: 2vw;
+    }
+    .nhud-root .nhud-money {
+        top: 20vh;
+        right: 2vw;
+    }
+    .nhud-root .nhud-weapon {
+        top: 23.5vh;
+        right: 2vw;
+    }
+    .nhud-root .nhud-radar {
+        bottom: 4vh;
+        left: 3vw;
+    }
+    .nhud-root .nhud-location {
+        bottom: 34vh;
+        left: 3vw;
+    }
+    .nhud-root .nhud-money__text,
+    .nhud-root .nhud-bar__value,
+    .nhud-root .nhud-ammo__text {
+        font-size: 1.5vw;
+    }
+    .nhud-root .nhud-radar__map {
+        width: 20vw;
+        height: 30vh;
+    }
+    .nhud-root .nhud-logo__img {
+        width: 24vw;
+        height: 14.2vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .nhud-root .nhud-logo {
+        top: 0;
+        right: 0;
+        height: 8vh;
+    }
+    .nhud-root .nhud-health {
+        top: 16vh;
+        right: 3vw;
+    }
+    .nhud-root .nhud-armor {
+        top: 19.5vh;
+        right: 3vw;
+    }
+    .nhud-root .nhud-money {
+        top: 23vh;
+        right: 3vw;
+    }
+    .nhud-root .nhud-weapon {
+        top: 26.5vh;
+        right: 3vw;
+    }
+    .nhud-root .nhud-radar {
+        bottom: 5vh;
+        left: 5vw;
+    }
+    .nhud-root .nhud-location {
+        bottom: 38vh;
+        left: 5vw;
+    }
+    .nhud-root .nhud-money__text,
+    .nhud-root .nhud-bar__value,
+    .nhud-root .nhud-ammo__text {
+        font-size: 2vw;
+    }
+    .nhud-root .nhud-radar__map {
+        width: 25vw;
+        height: 35vh;
+    }
+    .nhud-root .nhud-logo__img {
+        width: 30vw;
+        height: 17.7vh;
+    }
+}

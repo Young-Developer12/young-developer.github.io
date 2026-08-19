@@ -1,0 +1,356 @@
+.spdm-root {
+    --spdm-anim-duration: 250ms;
+    --spdm-anim-easing: ease;
+
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--spdm-anim-duration) var(--spdm-anim-easing),
+        visibility 0s linear var(--spdm-anim-duration);
+}
+
+.spdm-root--visible {
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--spdm-anim-duration) var(--spdm-anim-easing),
+        visibility 0s linear 0s;
+}
+
+.spdm-root,
+.spdm-root *,
+.spdm-root *::before,
+.spdm-root *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.spdm-wrapper {
+    width: min(24.4444444444vh, 13.75vw);
+    height: min(24.4444444444vh, 13.75vw);
+    position: absolute;
+    right: min(2.2222222222vh, 1.25vw);
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spdm-wrapper > * {
+    position: absolute;
+}
+
+.spdm-backdrop {
+    width: min(57.7777777778vh, 32.5vw);
+    height: min(57.7777777778vh, 32.5vw);
+    background: url('../images/speedometer/backdrop.png') center center / contain no-repeat;
+}
+
+.spdm-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.spdm-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spdm-row--emergency {
+    position: absolute;
+    top: min(2.7777777778vh, 1.5625vw);
+}
+
+.spdm-row--mileage {
+    position: absolute;
+    top: min(7.037037037vh, 3.9583333333vw);
+}
+
+.spdm-row--units {
+    position: absolute;
+    bottom: min(7.8703703704vh, 7.4270833333vw);
+    gap: min(1.3vh, 2vw);
+}
+
+.spdm-row--indicators {
+    position: absolute;
+    bottom: min(4.6296296296vh, 2.6041666667vw);
+    gap: min(1.2962962963vh, 0.7291666667vw);
+}
+
+.spdm-speed {
+    position: absolute;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    font-size: min(4.6296296296vh, 2.6041666667vw);
+    line-height: 1.3em;
+    letter-spacing: 0;
+    color: #fff;
+}
+
+.spdm-units {
+    font-family: 'Proxima Nova', 'Roboto', Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: min(1.4814814815vh, 0.8333333333vw);
+    line-height: 1.3em;
+    letter-spacing: 0;
+    color: #ffffff80;
+}
+
+.spdm-scale {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(24.4444444444vh, 13.75vw);
+    height: min(24.4444444444vh, 13.75vw);
+}
+
+.spdm-scale__bg {
+    position: absolute;
+}
+
+.spdm-scale__bg path {
+    fill: #ffffff4d;
+}
+
+.spdm-scale__indicators {
+    position: absolute;
+}
+
+.spdm-scale__indicators path {
+    fill: #fff;
+}
+
+.spdm-arrow {
+    position: absolute;
+    transform: rotate(-130deg);
+}
+
+.spdm-arrow__anchor {
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: flex;
+    justify-content: center;
+    transition: transform 60ms linear;
+}
+
+.spdm-arrow__icon {
+    position: absolute;
+    width: min(1.4814814815vh, 0.8333333333vw);
+    height: min(11.3166666667vh, 6.365625vw);
+    bottom: min(-1.1111111111vh, -0.625vw);
+}
+
+.spdm-fuel {
+    width: min(24.4444444444vh, 13.75vw);
+    height: min(24.4444444444vh, 13.75vw);
+    display: flex;
+}
+
+.spdm-fuel__bar {
+    transform: rotate(35deg);
+}
+
+.spdm-fuel__icon {
+    position: absolute;
+    top: min(9.537037037vh, 5.3645833333vw);
+    right: min(1.8518518519vh, 1.0416666667vw);
+    width: min(1.5740740741vh, 0.8854166667vw);
+    height: min(1.5740740741vh, 0.8854166667vw);
+    opacity: 0.4;
+}
+
+.spdm-strength {
+    width: min(24.4444444444vh, 13.75vw);
+    height: min(24.4444444444vh, 13.75vw);
+    display: flex;
+}
+
+.spdm-strength__bar {
+    transform: rotate(96deg);
+}
+
+.spdm-strength__icon {
+    position: absolute;
+    top: min(16.8518518519vh, 9.4791666667vw);
+    right: min(3.3333333333vh, 1.875vw);
+    width: min(1.5740740741vh, 0.8854166667vw);
+    height: min(1.9444444444vh, 1.09375vw);
+    opacity: 0.4;
+}
+
+.spdm-turns {
+    display: flex;
+    justify-content: space-between;
+    width: min(14.0740740741vh, 7.9166666667vw);
+}
+
+.spdm-light {
+    position: relative;
+    width: min(1.2037037037vh, 0.6770833333vw);
+    height: min(1.9444444444vh, 1.09375vw);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spdm-light__arrow {
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    background: #fff6;
+    width: min(1.2037037037vh, 0.6770833333vw);
+    height: min(1.9444444444vh, 1.09375vw);
+    position: relative;
+    z-index: 2;
+}
+
+.spdm-light__arrow > div {
+    width: 100%;
+    height: 100%;
+    background: #69da67;
+    opacity: 0;
+}
+
+.spdm-light__arrow--left {
+    -webkit-mask-image: url('../images/speedometer/icons/turn-left.svg');
+    mask-image: url('../images/speedometer/icons/turn-left.svg');
+}
+
+.spdm-light__arrow--left + .spdm-light__backdrop {
+    transform: rotate(180deg);
+}
+
+.spdm-light__arrow--right {
+    -webkit-mask-image: url('../images/speedometer/icons/turn-right.svg');
+    mask-image: url('../images/speedometer/icons/turn-right.svg');
+}
+
+.spdm-light__backdrop {
+    position: absolute;
+    z-index: 1;
+    width: min(4.9074074074vh, 2.7604166667vw);
+    height: min(5.6481481481vh, 3.1770833333vw);
+    background: url('../images/speedometer/icons/turn-backdrop.png') center center / cover no-repeat;
+    opacity: 0;
+}
+
+.spdm-emergency {
+    position: relative;
+    width: min(2.7777777778vh, 1.5625vw);
+    height: min(2.3148148148vh, 1.3020833333vw);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.spdm-emergency svg {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+}
+
+.spdm-emergency__backdrop {
+    position: absolute;
+    z-index: 1;
+    width: min(9.2592592593vh, 5.2083333333vw);
+    height: min(8.7962962963vh, 4.9479166667vw);
+    background: url('../images/speedometer/icons/emergency-backdrop.png') center center / cover no-repeat;
+}
+
+.spdm-mileage {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: min(1.4814814815vh, 0.8333333333vw);
+    line-height: 1.3em;
+    letter-spacing: 0.1em;
+    color: #ffffff80;
+}
+
+.spdm-engine__icon {
+    width: min(2.2222222222vh, 1.25vw);
+    height: min(1.5740740741vh, 0.8854166667vw);
+    -webkit-mask: url('../images/speedometer/icons/engine.svg') center center / contain no-repeat;
+    mask: url('../images/speedometer/icons/engine.svg') center center / contain no-repeat;
+    background: #ffffff80;
+}
+
+.spdm-doors__icon {
+    width: min(1.8518518519vh, 1.0416666667vw);
+    height: min(1.6666666667vh, 0.9375vw);
+    -webkit-mask: url('../images/speedometer/icons/door.svg') center center / contain no-repeat;
+    mask: url('../images/speedometer/icons/door.svg') center center / contain no-repeat;
+    background: #69da67;
+}
+
+.spdm-headlights__icon {
+    width: min(1.6666666667vh, 0.9375vw);
+    height: min(1.6666666667vh, 0.9375vw);
+    -webkit-mask: url('../images/speedometer/icons/headlights.svg') center center / contain no-repeat;
+    mask: url('../images/speedometer/icons/headlights.svg') center center / contain no-repeat;
+    background: #ffffff80;
+}
+
+.spdm-staging {
+    display: flex;
+    align-items: flex-end;
+}
+
+.spdm-staging__icon {
+    width: min(1.0185185185vh, 0.5729166667vw);
+    height: min(1.6666666667vh, 0.9375vw);
+    -webkit-mask: url('../images/speedometer/icons/tuning-stage.svg') center center / contain no-repeat;
+    mask: url('../images/speedometer/icons/tuning-stage.svg') center center / contain no-repeat;
+    background: #ffffff80;
+}
+
+.spdm-staging__stage {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: min(1.1111111111vh, 0.625vw);
+    letter-spacing: 0;
+    color: #ffd232;
+    line-height: 1em;
+    position: relative;
+    left: min(0.1851851852vh, 0.1041666667vw);
+    top: min(0.1851851852vh, 0.1041666667vw);
+    opacity: 0;
+}
+
+.spdm-nitro {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spdm-nitro__bar {
+    transform: rotate(-90deg);
+    width: min(3vh, 1.6875vw);
+    height: min(3vh, 1.6875vw);
+}
+
+.spdm-nitro__icon {
+    position: absolute;
+    width: min(1.8vh, 1.0125vw);
+    height: min(2.2vh, 1.2375vw);
+}
+
+.spdm-nitro__icon path {
+    transition: fill 0.2s ease;
+}

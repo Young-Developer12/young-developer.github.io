@@ -1,0 +1,114 @@
+.nfy-root {
+    --nfy-anim-duration: 350ms;
+    --nfy-anim-easing: ease;
+    --nfy-shift: 20px;
+
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.nfy-root,
+.nfy-root *,
+.nfy-root *::before,
+.nfy-root *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+}
+
+.nfy-root .nfy-stack {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+.nfy-root .nfy-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    padding: 18px 22px 14px;
+    width: 320px;
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    background: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(var(--nfy-shift));
+    transition:
+        opacity var(--nfy-anim-duration) var(--nfy-anim-easing),
+        transform var(--nfy-anim-duration) var(--nfy-anim-easing),
+        visibility 0s linear var(--nfy-anim-duration);
+}
+
+.nfy-root .nfy-item--visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition:
+        opacity var(--nfy-anim-duration) var(--nfy-anim-easing),
+        transform var(--nfy-anim-duration) var(--nfy-anim-easing),
+        visibility 0s linear 0s;
+}
+
+.nfy-root .nfy-item__bg {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../images/background.png') no-repeat center / cover;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.nfy-root .nfy-item__header,
+.nfy-root .nfy-item__text,
+.nfy-root .nfy-progress {
+    position: relative;
+    z-index: 1;
+}
+
+.nfy-root .nfy-item__header {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.nfy-root .nfy-item__icon {
+    font-family: 'Material Icons', 'Montserrat', Arial, sans-serif;
+    font-size: 22px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.nfy-root .nfy-item__text {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+    margin-bottom: 10px;
+}
+
+.nfy-root .nfy-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.nfy-root .nfy-progress__fill {
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    transition: width linear;
+}

@@ -1,0 +1,124 @@
+.keyhint-root {
+    --keyhint-anim-duration: 400ms;
+    --keyhint-anim-easing: ease-out;
+    --keyhint-offset-shown: 35px;
+    --keyhint-offset-hidden: -100px;
+
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+}
+
+.keyhint-root,
+.keyhint-root *,
+.keyhint-root *::before,
+.keyhint-root *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.keyhint-root .keyhint-frame {
+    display: flex;
+    flex-direction: column;
+    width: 398px;
+    height: 92px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 17px;
+
+    position: absolute;
+    bottom: var(--keyhint-offset-hidden);
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-color: #131313c5;
+    border-radius: 8.31px;
+    overflow: hidden;
+
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        bottom var(--keyhint-anim-duration) var(--keyhint-anim-easing),
+        opacity var(--keyhint-anim-duration) var(--keyhint-anim-easing),
+        visibility 0s linear var(--keyhint-anim-duration);
+}
+
+.keyhint-root .keyhint-frame--visible {
+    bottom: var(--keyhint-offset-shown);
+    opacity: 1;
+    visibility: visible;
+    transition:
+        bottom var(--keyhint-anim-duration) var(--keyhint-anim-easing),
+        opacity var(--keyhint-anim-duration) var(--keyhint-anim-easing),
+        visibility 0s linear 0s;
+}
+
+.keyhint-root .keyhint-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 37px;
+    position: relative;
+    align-self: stretch;
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+.keyhint-root .keyhint-text {
+    position: relative;
+    width: 255px;
+    height: 30px;
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.keyhint-root .keyhint-key {
+    position: relative;
+    width: 56px;
+    height: 56px;
+}
+
+.keyhint-root .keyhint-key__box {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+}
+
+.keyhint-root .keyhint-key__bg {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    top: 0;
+    left: 0;
+    border-radius: 8px;
+    transform: rotate(-180deg);
+    background: linear-gradient(
+        223deg,
+        rgba(255, 185, 55, 1) 0%,
+        rgba(254, 209, 121, 1) 100%
+    );
+}
+
+.keyhint-root .keyhint-key__label {
+    position: absolute;
+    top: 14px;
+    left: 0;
+    width: 100%;
+    font-family: "Gotham Pro", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    color: #131313;
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
