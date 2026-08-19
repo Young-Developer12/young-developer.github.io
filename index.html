@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>adept</title>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" /> -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/fonts/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="css/rentscooter.css">
+    <link rel="stylesheet" type="text/css" href="css/dialogs.css">
+    <link rel="stylesheet" type="text/css" href="css/interface.hud.css">
+    <link rel="stylesheet" type="text/css" href="css/hint.css">
+    <link rel="stylesheet" type="text/css" href="css/speedometer.css">
+    <link rel="stylesheet" type="text/css" href="css/bizstats.css">
+    <link rel="stylesheet" type="text/css" href="css/notification.css">
+    <link rel="stylesheet" type="text/css" href="css/key-hold.css">
+    <link rel="stylesheet" type="text/css" href="css/auth.css">
+    <link rel="stylesheet" type="text/css" href="css/chat.css">
+    <!-- <link rel="stylesheet" type="text/css" href="css/dialog1.css">
+    <link rel="stylesheet" type="text/css" href="css/dialog2.css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            user-select: none;
+            /* background-color: black;
+            background: url(images/bg.svg) no-repeat transparent; */
+            background-size: 200vh;
+            background-position: right 0 top 0;
+        }
+
+        #blackout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.7s ease;
+            z-index: 9999;
+        }
+
+        #blackout.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="cef-chat__main" v-cloak>
+        <div id="chat-block" ref="chatMessages" v-show="chatMessages.length > 0" :style="{ opacity: chatOpacity, maxHeight: chatHeight + 'vh', overflowY: chatOverflow }" class="chat-messages">
+            <div v-for="message in chatMessages" :key="message.id" class="chat-message">
+                <span class="message-time" v-show="chatShowTime"style="color: rgba(255, 255, 255);" v-html="message.time"></span>
+                <span class="message-category" v-show="chatShowCategory" :style="{ backgroundColor: message.color, marginLeft: message.category ? '0.2vh' : '' }" v-html="message.category"></span>
+  
+                <span v-if="message.repeat > 1" 
+                        class="message-repeat-counter"
+                        style="font-weight: 700; color: #ffcc00; background: rgba(0,0,0,0.35); border-radius: 4px; padding: 3px 10px; user-select: none; flex-shrink: 0;">
+                    x{{ message.repeat }}
+                </span>
+                <span class="message-text" :style="{ color: message.color, fontSize: chatFontSize + 'vh', opacity: chatOpacity }" v-html="message.text"></span>
+            </div>
+        </div>
+        <input id="chat-input" v-show="chatShowInput" type="text" v-model="chatInput" @input="filterCommands" placeholder="Введите сообщение...">
+        <div class="settings-block">
+            <div class="settings-button" v-show="chatShowInput" @mouseover="chatShowSettings = true" :style="{ background: chatShowSettings ? 'rgba(255, 255, 255)' : 'rgba(0, 0, 0, 0.50)' }">
+                <svg  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke="currentColor" :style="{ stroke: chatShowSettings ? 'rgba(0, 0, 0)' : 'rgba(255, 255, 255)' }" d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path stroke="currentColor" :style="{ stroke: chatShowSettings ? 'rgba(0, 0, 0)' : 'rgba(255, 255, 255)' }" d="M12.9046 3.06005C12.6988 3 12.4659 3 12 3C11.5341 3 11.3012 3 11.0954 3.06005C10.7942 3.14794 10.5281 3.32808 10.3346 3.57511C10.2024 3.74388 10.1159 3.96016 9.94291 4.39272C9.69419 5.01452 9.00393 5.33471 8.36857 5.123L7.79779 4.93281C7.3929 4.79785 7.19045 4.73036 6.99196 4.7188C6.70039 4.70181 6.4102 4.77032 6.15701 4.9159C5.98465 5.01501 5.83376 5.16591 5.53197 5.4677C5.21122 5.78845 5.05084 5.94882 4.94896 6.13189C4.79927 6.40084 4.73595 6.70934 4.76759 7.01551C4.78912 7.2239 4.87335 7.43449 5.04182 7.85566C5.30565 8.51523 5.05184 9.26878 4.44272 9.63433L4.16521 9.80087C3.74031 10.0558 3.52786 10.1833 3.37354 10.3588C3.23698 10.5141 3.13401 10.696 3.07109 10.893C3 11.1156 3 11.3658 3 11.8663C3 12.4589 3 12.7551 3.09462 13.0088C3.17823 13.2329 3.31422 13.4337 3.49124 13.5946C3.69158 13.7766 3.96395 13.8856 4.50866 14.1035C5.06534 14.3261 5.35196 14.9441 5.16236 15.5129L4.94721 16.1584C4.79819 16.6054 4.72367 16.829 4.7169 17.0486C4.70875 17.3127 4.77049 17.5742 4.89587 17.8067C5.00015 18.0002 5.16678 18.1668 5.5 18.5C5.83323 18.8332 5.99985 18.9998 6.19325 19.1041C6.4258 19.2295 6.68733 19.2913 6.9514 19.2831C7.17102 19.2763 7.39456 19.2018 7.84164 19.0528L8.36862 18.8771C9.00393 18.6654 9.6942 18.9855 9.94291 19.6073C10.1159 20.0398 10.2024 20.2561 10.3346 20.4249C10.5281 20.6719 10.7942 20.8521 11.0954 20.94C11.3012 21 11.5341 21 12 21C12.4659 21 12.6988 21 12.9046 20.94C13.2058 20.8521 13.4719 20.6719 13.6654 20.4249C13.7976 20.2561 13.8841 20.0398 14.0571 19.6073C14.3058 18.9855 14.9961 18.6654 15.6313 18.8773L16.1579 19.0529C16.605 19.2019 16.8286 19.2764 17.0482 19.2832C17.3123 19.2913 17.5738 19.2296 17.8063 19.1042C17.9997 18.9999 18.1664 18.8333 18.4996 18.5001C18.8328 18.1669 18.9994 18.0002 19.1037 17.8068C19.2291 17.5743 19.2908 17.3127 19.2827 17.0487C19.2759 16.8291 19.2014 16.6055 19.0524 16.1584L18.8374 15.5134C18.6477 14.9444 18.9344 14.3262 19.4913 14.1035C20.036 13.8856 20.3084 13.7766 20.5088 13.5946C20.6858 13.4337 20.8218 13.2329 20.9054 13.0088C21 12.7551 21 12.4589 21 11.8663C21 11.3658 21 11.1156 20.9289 10.893C20.866 10.696 20.763 10.5141 20.6265 10.3588C20.4721 10.1833 20.2597 10.0558 19.8348 9.80087L19.5569 9.63416C18.9478 9.26867 18.6939 8.51514 18.9578 7.85558C19.1262 7.43443 19.2105 7.22383 19.232 7.01543C19.2636 6.70926 19.2003 6.40077 19.0506 6.13181C18.9487 5.94875 18.7884 5.78837 18.4676 5.46762C18.1658 5.16584 18.0149 5.01494 17.8426 4.91583C17.5894 4.77024 17.2992 4.70174 17.0076 4.71872C16.8091 4.73029 16.6067 4.79777 16.2018 4.93273L15.6314 5.12287C14.9961 5.33464 14.3058 5.0145 14.0571 4.39272C13.8841 3.96016 13.7976 3.74388 13.6654 3.57511C13.4719 3.32808 13.2058 3.14794 12.9046 3.06005Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="settings-text" :style="{ color: chatShowSettings ? 'rgba(0, 0, 0)' : 'rgba(255, 255, 255)' }">Настройки</div>
+              </div>
+            <div class="command-hints" v-show="chatShowHints && chatShowHintsCmd">
+                <div v-for="chatCommands in chatFilteredCommands" :key="chatCommands" @click="selectCommand(chatCommands)" class="command-hint">
+                    {{ chatCommands }}
+                </div>
+            </div>
+        </div>
+        <div class="chat-settings-menu" v-show="chatShowSettings" @mouseleave="chatShowSettings = false">
+            <div class="chat-settings-header">Настройки чата</div>
+            <div class="chat-settings-slider">
+                <div class="slider">
+                  <div class="chat-settings-description">Прозрачность: {{ chatOpacity }}</div>
+                  <input type="range" min="0" max="1" step="0.1" v-model="chatOpacity">
+                </div>
+                <div class="slider">
+                  <div class="chat-settings-description">Размер шрифта: {{ chatFontSize }}</div>
+                  <input type="range" min="1.2" max="1.8" step="0.1" v-model="chatFontSize">
+                </div>
+                <div class="slider">
+                  <div class="chat-settings-description">Высота: {{ chatHeight }}</div>
+                  <input type="range" min="20" max="40" step="1" v-model="chatHeight">
+                </div>
+              </div>
+            <div class="chat-settings-actions">
+                <div v-if="chatShowTime" class="chat-settings-button" @click="chatShowTime = false">Скрывать время</div>
+                <div v-else class="chat-settings-button" @click="chatShowTime = true">Отображать время</div>
+                <div v-if="chatShowHintsCmd" class="chat-settings-button" @click="chatShowHintsCmd = false">Скрывать подсказки</div>
+                <div v-else class="chat-settings-button" @click="chatShowHintsCmd = true">Отображать подсказки</div>
+                <div v-if="chatShowCategory" class="chat-settings-button" @click="chatShowCategory = false">Скрывать категории</div>
+                <div v-else class="chat-settings-button" @click="chatShowCategory = true">Отображать категории</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="key-hold">
+        <div class="ellipse-shadow"></div>
+        <div class="div">
+        <div class="div-wrapper-key"><div class="text-wrapper-keys text-fade">К</div></div>
+        <div class="div-2">
+            <div class="text-wrapper-key-main text-fade">Q</div>
+            <div class="overlap-group-key"><div class="rectangle-key"></div></div>
+            <img class="polygon" src="images/polygon-1.svg"/>
+        </div>
+        <div class="div-wrapper-key"><div class="text-wrapper-keys text-fade">E</div></div>
+        </div>
+        <p class="p">Нажмите на клавишу, до того, как заполнится шкала</p>
+    </div>
+
+    <div class="nfy-root">
+        <div class="nfy-stack"></div>
+    </div>
+ 
+    <div id="blackout"></div>
+    <div class="spdm-root">
+        <div class="spdm-wrapper">
+            <div class="spdm-backdrop"></div>
+
+            <div class="spdm-scale">
+                <svg class="spdm-scale__bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                        <path d="m112.91,781.06l-13.64,9.85c-2.27,1.52-3.03,4.92-1.14,7.2,1.52,2.27,4.92,3.03,7.2,1.14l13.26-10.23c2.27-1.52,2.65-4.55,1.14-6.82-1.52-2.27-4.55-2.65-6.82-1.14Z" />
+                        <path d="m120.87,708.71l-53.79,29.55c-3.41,1.52-4.55,5.68-2.65,9.09,1.89,3.03,6.06,4.17,9.47,2.27l52.65-30.68c3.03-1.52,3.79-5.3,2.27-7.95s-5.3-3.79-7.95-2.27Z" />
+                        <path d="m64.05,685.61c-1.14-2.65-3.79-3.79-6.44-2.65l-15.53,6.44c-2.65,1.14-3.79,4.17-2.65,6.82,1.14,2.65,4.17,3.79,6.82,2.65l15.15-6.82c2.65-1.14,3.79-3.79,2.65-6.44Z" />
+                        <path d="m90.94,621.59c-.76-3.41-4.17-4.92-7.2-4.17l-59.09,16.67c-3.41.76-5.68,4.55-4.55,8.33.76,3.79,4.55,5.68,8.33,4.55l58.71-18.18c3.03-.76,4.55-4.17,3.79-7.2Z" />
+                        <path d="m32.61,578.41c-.38-2.65-3.03-4.55-5.68-4.17l-16.67,2.65c-2.65.38-4.55,3.41-4.17,6.06.38,2.65,3.41,4.55,6.06,4.17l16.29-3.03c2.65-.38,4.55-3.03,4.17-5.68Z" />
+                        <path d="m7.23,533.33l61.36-4.17c3.03,0,5.3-3.03,5.3-6.06,0-3.41-3.03-5.68-6.06-5.68l-61.36,2.27c-3.79.38-6.82,3.41-6.44,7.2,0,3.79,3.41,6.82,7.2,6.44Z" />
+                        <path d="m4.96,474.24l16.67.76c2.65.38,4.92-1.89,5.3-4.55.38-2.65-1.89-4.92-4.55-5.3l-16.67-1.14c-3.03,0-5.68,1.89-5.68,4.92,0,2.65,1.89,5.3,4.92,5.3Z" />
+                        <path d="m12.91,417.8l60.23,10.23c3.41.38,6.06-1.89,6.82-4.92.76-3.03-1.52-6.06-4.55-6.82l-60.23-11.74c-3.79-.76-7.2,1.52-7.95,5.3-.38,3.79,1.89,7.2,5.68,7.95Z" />
+                        <path d="m24.65,360.23l16.29,4.55c2.65.76,5.3-.76,6.06-3.41.76-2.65-.76-5.3-3.41-6.06l-15.91-4.92c-2.65-.76-5.68.76-6.44,3.41-.76,2.65.76,5.68,3.41,6.44Z" />
+                        <path d="m45.49,307.2l56.82,23.48c3.03,1.14,6.44-.38,7.58-3.03,1.14-2.65,0-6.06-3.03-7.58l-55.68-25.38c-3.41-1.52-7.58,0-9.09,3.41-1.52,3.79,0,7.58,3.41,9.09Z" />
+                        <path d="m70.11,253.41l14.39,8.33c2.27,1.14,5.3.38,6.82-1.89,1.52-2.27.76-5.3-1.52-6.82l-14.39-8.71c-2.65-1.52-5.68-.76-7.2,1.89-1.52,2.65-.76,5.68,1.89,7.2Z" />
+                        <path d="m100.79,209.47l49.24,36.36c2.65,1.89,6.44,1.52,8.33-1.14s1.52-6.44-1.14-8.33l-48.48-37.5c-3.03-2.27-7.2-1.89-9.47,1.14-2.27,3.03-1.52,7.2,1.52,9.47Z" />
+                        <path d="m149.65,173.86c1.89,1.52,4.92,1.52,6.82-.38s1.89-4.92,0-6.82l-12.12-11.74c-1.89-2.27-5.3-1.89-7.2,0s-1.89,5.3.38,7.2l12.12,11.74Z" />
+                        <path d="m219.35,171.21c2.27,2.65,5.68,2.65,8.33.76,2.27-2.27,2.65-5.68.76-8.33l-38.64-47.73c-2.27-3.03-6.44-3.41-9.47-1.14-3.03,2.65-3.03,6.82-.76,9.85l39.77,46.59Z" />
+                        <path d="m234.5,101.52c1.52,2.27,4.55,3.03,6.82,1.52,2.27-1.52,3.03-4.55,1.52-6.82l-9.09-14.02c-1.52-2.27-4.92-3.03-7.2-1.52-2.27,1.52-3.03,4.92-1.52,7.2l9.47,13.64Z" />
+                        <path d="m303.06,115.15c1.52,3.03,4.92,4.17,7.95,2.65,2.65-1.52,4.17-4.92,2.65-7.95l-26.52-55.3c-1.52-3.41-5.68-4.55-9.09-3.03-3.41,1.52-4.92,5.68-3.03,9.09l28.03,54.55Z" />
+                        <path d="m333.74,51.14c1.14,2.65,3.79,3.79,6.44,3.03,2.65-1.14,3.79-3.79,3.03-6.44l-5.3-15.91c-.76-2.65-3.79-4.17-6.44-3.03s-4.17,4.17-3.03,6.82l5.3,15.53Z" />
+                        <path d="m395.11,80.68c.76,3.03,4.17,4.92,7.2,4.17,3.41-.76,5.3-3.79,4.55-6.82l-12.88-59.85c-.76-3.79-4.17-6.06-7.95-5.3-3.41,1.14-5.68,4.55-4.92,8.33l14.02,59.47Z" />
+                        <path d="m443.97,25c0,2.65,2.65,4.55,5.3,4.17,2.65-.38,4.92-2.65,4.55-5.3l-1.52-16.67c-.38-2.65-2.65-4.92-5.68-4.55-2.65.38-4.92,2.65-4.55,5.68l1.89,16.67Z" />
+                        <path d="m503.06,73.86c3.41,0,6.06-2.65,6.06-5.68l1.52-61.36c0-3.79-3.03-6.82-6.82-6.82s-6.82,3.03-6.82,6.82l.38,61.36c0,3.03,2.27,5.68,5.68,5.68Z" />
+                        <path d="m558.37,30.68c2.65.38,5.3-1.52,5.68-4.17l2.27-17.05c.38-2.65-1.52-5.3-4.55-5.68-2.65-.38-5.3,1.52-5.68,4.55l-1.89,17.05c-.38,2.65,1.52,4.92,4.17,5.3Z" />
+                        <path d="m601.55,86.74c3.03.76,6.44-1.14,7.2-4.17l15.53-59.47c.76-3.79-1.14-7.58-4.92-8.33-3.79-1.14-7.58,1.14-8.33,4.92l-13.64,59.85c-.76,3.41,1.14,6.44,4.17,7.2Z" />
+                        <path d="m663.67,56.44c2.65.76,5.3-.38,6.44-3.03l6.06-15.53c1.14-2.65-.38-5.68-3.03-6.82-3.03-1.14-5.68.38-6.82,3.03l-5.68,15.91c-.76,2.65.38,5.68,3.03,6.44Z" />
+                        <path d="m692.46,120.45c3.03,1.14,6.44.38,7.95-2.65l28.41-54.17c1.52-3.41.38-7.2-3.03-9.09-3.41-1.89-7.58-.38-9.09,3.03l-26.89,54.92c-1.52,3.03-.38,6.44,2.65,7.95Z" />
+                </svg>
+                <svg class="spdm-scale__indicators" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                        <path class="spdm-indicator" d="m112.91,781.06l-13.64,9.85c-2.27,1.52-3.03,4.92-1.14,7.2,1.52,2.27,4.92,3.03,7.2,1.14l13.26-10.23c2.27-1.52,2.65-4.55,1.14-6.82-1.52-2.27-4.55-2.65-6.82-1.14Z" />
+                        <path class="spdm-indicator" d="m120.87,708.71l-53.79,29.55c-3.41,1.52-4.55,5.68-2.65,9.09,1.89,3.03,6.06,4.17,9.47,2.27l52.65-30.68c3.03-1.52,3.79-5.3,2.27-7.95s-5.3-3.79-7.95-2.27Z" />
+                        <path class="spdm-indicator" d="m64.05,685.61c-1.14-2.65-3.79-3.79-6.44-2.65l-15.53,6.44c-2.65,1.14-3.79,4.17-2.65,6.82,1.14,2.65,4.17,3.79,6.82,2.65l15.15-6.82c2.65-1.14,3.79-3.79,2.65-6.44Z" />
+                        <path class="spdm-indicator" d="m90.94,621.59c-.76-3.41-4.17-4.92-7.2-4.17l-59.09,16.67c-3.41.76-5.68,4.55-4.55,8.33.76,3.79,4.55,5.68,8.33,4.55l58.71-18.18c3.03-.76,4.55-4.17,3.79-7.2Z" />
+                        <path class="spdm-indicator" d="m32.61,578.41c-.38-2.65-3.03-4.55-5.68-4.17l-16.67,2.65c-2.65.38-4.55,3.41-4.17,6.06.38,2.65,3.41,4.55,6.06,4.17l16.29-3.03c2.65-.38,4.55-3.03,4.17-5.68Z" />
+                        <path class="spdm-indicator" d="m7.23,533.33l61.36-4.17c3.03,0,5.3-3.03,5.3-6.06,0-3.41-3.03-5.68-6.06-5.68l-61.36,2.27c-3.79.38-6.82,3.41-6.44,7.2,0,3.79,3.41,6.82,7.2,6.44Z" />
+                        <path class="spdm-indicator" d="m4.96,474.24l16.67.76c2.65.38,4.92-1.89,5.3-4.55.38-2.65-1.89-4.92-4.55-5.3l-16.67-1.14c-3.03,0-5.68,1.89-5.68,4.92,0,2.65,1.89,5.3,4.92,5.3Z" />
+                        <path class="spdm-indicator" d="m12.91,417.8l60.23,10.23c3.41.38,6.06-1.89,6.82-4.92.76-3.03-1.52-6.06-4.55-6.82l-60.23-11.74c-3.79-.76-7.2,1.52-7.95,5.3-.38,3.79,1.89,7.2,5.68,7.95Z" />
+                        <path class="spdm-indicator" d="m24.65,360.23l16.29,4.55c2.65.76,5.3-.76,6.06-3.41.76-2.65-.76-5.3-3.41-6.06l-15.91-4.92c-2.65-.76-5.68.76-6.44,3.41-.76,2.65.76,5.68,3.41,6.44Z" />
+                        <path class="spdm-indicator" d="m45.49,307.2l56.82,23.48c3.03,1.14,6.44-.38,7.58-3.03,1.14-2.65,0-6.06-3.03-7.58l-55.68-25.38c-3.41-1.52-7.58,0-9.09,3.41-1.52,3.79,0,7.58,3.41,9.09Z" />
+                        <path class="spdm-indicator" d="m70.11,253.41l14.39,8.33c2.27,1.14,5.3.38,6.82-1.89,1.52-2.27.76-5.3-1.52-6.82l-14.39-8.71c-2.65-1.52-5.68-.76-7.2,1.89-1.52,2.65-.76,5.68,1.89,7.2Z" />
+                        <path class="spdm-indicator" d="m100.79,209.47l49.24,36.36c2.65,1.89,6.44,1.52,8.33-1.14s1.52-6.44-1.14-8.33l-48.48-37.5c-3.03-2.27-7.2-1.89-9.47,1.14-2.27,3.03-1.52,7.2,1.52,9.47Z" />
+                        <path class="spdm-indicator" d="m149.65,173.86c1.89,1.52,4.92,1.52,6.82-.38s1.89-4.92,0-6.82l-12.12-11.74c-1.89-2.27-5.3-1.89-7.2,0s-1.89,5.3.38,7.2l12.12,11.74Z" />
+                        <path class="spdm-indicator" d="m219.35,171.21c2.27,2.65,5.68,2.65,8.33.76,2.27-2.27,2.65-5.68.76-8.33l-38.64-47.73c-2.27-3.03-6.44-3.41-9.47-1.14-3.03,2.65-3.03,6.82-.76,9.85l39.77,46.59Z" />
+                        <path class="spdm-indicator" d="m234.5,101.52c1.52,2.27,4.55,3.03,6.82,1.52,2.27-1.52,3.03-4.55,1.52-6.82l-9.09-14.02c-1.52-2.27-4.92-3.03-7.2-1.52-2.27,1.52-3.03,4.92-1.52,7.2l9.47,13.64Z" />
+                        <path class="spdm-indicator" d="m303.06,115.15c1.52,3.03,4.92,4.17,7.95,2.65,2.65-1.52,4.17-4.92,2.65-7.95l-26.52-55.3c-1.52-3.41-5.68-4.55-9.09-3.03-3.41,1.52-4.92,5.68-3.03,9.09l28.03,54.55Z" />
+                        <path class="spdm-indicator" d="m333.74,51.14c1.14,2.65,3.79,3.79,6.44,3.03,2.65-1.14,3.79-3.79,3.03-6.44l-5.3-15.91c-.76-2.65-3.79-4.17-6.44-3.03s-4.17,4.17-3.03,6.82l5.3,15.53Z" />
+                        <path class="spdm-indicator" d="m395.11,80.68c.76,3.03,4.17,4.92,7.2,4.17,3.41-.76,5.3-3.79,4.55-6.82l-12.88-59.85c-.76-3.79-4.17-6.06-7.95-5.3-3.41,1.14-5.68,4.55-4.92,8.33l14.02,59.47Z" />
+                        <path class="spdm-indicator" d="m443.97,25c0,2.65,2.65,4.55,5.3,4.17,2.65-.38,4.92-2.65,4.55-5.3l-1.52-16.67c-.38-2.65-2.65-4.92-5.68-4.55-2.65.38-4.92,2.65-4.55,5.68l1.89,16.67Z" />
+                        <path class="spdm-indicator" d="m503.06,73.86c3.41,0,6.06-2.65,6.06-5.68l1.52-61.36c0-3.79-3.03-6.82-6.82-6.82s-6.82,3.03-6.82,6.82l.38,61.36c0,3.03,2.27,5.68,5.68,5.68Z" />
+                        <path class="spdm-indicator" d="m558.37,30.68c2.65.38,5.3-1.52,5.68-4.17l2.27-17.05c.38-2.65-1.52-5.3-4.55-5.68-2.65-.38-5.3,1.52-5.68,4.55l-1.89,17.05c-.38,2.65,1.52,4.92,4.17,5.3Z" />
+                        <path class="spdm-indicator" d="m601.55,86.74c3.03.76,6.44-1.14,7.2-4.17l15.53-59.47c.76-3.79-1.14-7.58-4.92-8.33-3.79-1.14-7.58,1.14-8.33,4.92l-13.64,59.85c-.76,3.41,1.14,6.44,4.17,7.2Z" />
+                        <path class="spdm-indicator" d="m663.67,56.44c2.65.76,5.3-.38,6.44-3.03l6.06-15.53c1.14-2.65-.38-5.68-3.03-6.82-3.03-1.14-5.68.38-6.82,3.03l-5.68,15.91c-.76,2.65.38,5.68,3.03,6.44Z" />
+                        <path class="spdm-indicator" d="m692.46,120.45c3.03,1.14,6.44.38,7.95-2.65l28.41-54.17c1.52-3.41.38-7.2-3.03-9.09-3.41-1.89-7.58-.38-9.09,3.03l-26.89,54.92c-1.52,3.03-.38,6.44,2.65,7.95Z" />
+                </svg>
+                <div class="spdm-arrow">
+                    <div class="spdm-arrow__anchor">
+                        <svg class="spdm-arrow__icon" viewBox="0 0 16 112.22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m4.55,111.43c3.99,1.91,8.76.22,10.67-3.76,1.59-3.33.67-7.2-1.99-9.5L7.99,0,2.61,98.31c-.74.67-1.36,1.49-1.82,2.45-1.91,3.99-.22,8.76,3.76,10.67Z" fill="#e12c17" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spdm-fuel">
+                <canvas class="spdm-fuel__bar" width="264" height="264"></canvas>
+                <svg class="spdm-fuel__icon" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.12516 0C1.35258 0 0.708496 0.644084 0.708496 1.41667V16.2917C0.708537 16.6829 1.02564 17 1.41683 17H9.91683C10.308 17 10.6251 16.6829 10.6252 16.2917V13.1042C10.6252 12.9086 10.7837 12.75 10.9793 12.75H11.3335C11.7331 12.75 12.0418 13.0587 12.0418 13.4583V14.1667C12.0418 15.3319 13.0016 16.2917 14.1668 16.2917C15.332 16.2917 16.2918 15.3319 16.2918 14.1667V4.95833C16.2918 4.29009 15.977 3.659 15.4424 3.25806L13.1749 1.55778C12.8288 1.29828 12.3865 1.4238 12.1829 1.70028C11.9509 2.01549 12.012 2.45774 12.3254 2.69222L13.1749 3.32861C13.3535 3.46243 13.4586 3.67263 13.4585 3.89583V5.66667C13.4585 6.32001 13.9169 6.88041 14.5251 7.03906C14.714 7.08831 14.8752 7.2419 14.8752 7.4375V14.1667C14.8752 14.5663 14.5664 14.875 14.1668 14.875C13.7672 14.875 13.4585 14.5663 13.4585 14.1667V13.4583C13.4585 12.2931 12.4987 11.3333 11.3335 11.3333H10.9793C10.7837 11.3333 10.6252 11.1748 10.6252 10.9792V1.41667C10.6252 0.644084 9.98108 2.125e-08 9.2085 2.125e-08L2.12516 0ZM2.47933 1.41667H8.85433C9.05054 1.41667 9.2085 1.57462 9.2085 1.77083V6.72917C9.2085 6.92537 9.05054 7.08333 8.85433 7.08333H2.47933C2.28312 7.08333 2.12516 6.92537 2.12516 6.72917V1.77083C2.12516 1.57462 2.28312 1.41667 2.47933 1.41667Z" fill="white" />
+                </svg>
+            </div>
+
+            <div class="spdm-strength">
+                <canvas class="spdm-strength__bar" width="264" height="264"></canvas>
+                <svg class="spdm-strength__icon" width="17" height="21" viewBox="0 0 17 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.142795 17.2734C0.17203 17.2362 0.204547 17.2015 0.233231 17.1639L6.295 9.21137C6.53584 8.8954 6.5585 8.46975 6.41016 8.10118C5.72992 6.41108 5.94856 4.41693 7.16144 2.82573C8.27762 1.36141 10.0065 0.635407 11.713 0.693347C12.4095 0.716994 12.6785 1.51717 12.256 2.0714L10.6621 4.16258C10.3273 4.60181 10.4119 5.22929 10.8511 5.56409L12.0814 6.50188C12.5171 6.83397 13.1389 6.75372 13.4759 6.3219L15.1789 4.1403C15.5959 3.60606 16.4136 3.64141 16.6316 4.28313C17.1904 5.9282 16.9064 7.82921 15.7732 9.3159C14.5603 10.9071 12.6954 11.6464 10.8855 11.4384C10.4908 11.393 10.0863 11.5276 9.84549 11.8436L3.74064 19.8527C3.45487 20.2276 2.95936 20.2944 2.58445 20.0086L0.428723 18.3654C-0.00255002 18.1066 -0.0965786 17.578 0.142795 17.2734Z" fill="white" />
+                </svg>
+            </div>
+
+            <div class="spdm-content">
+                <div class="spdm-row spdm-row--emergency">
+                    <div class="spdm-emergency">
+                        <div class="spdm-emergency__backdrop"></div>
+                        <svg viewBox="0 0 30 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4.45166 25H25.5476C27.4013 25 28.9148 24.229 29.5969 23.0003C30.2806 21.7454 30.0848 20.1788 29.0841 18.6598L17.8408 1.63878C17.1338 0.602034 16.1099 0 15.0113 0C13.8894 0 12.8655 0.602034 12.1585 1.63878L0.915198 18.6598C-0.0854988 20.1788 -0.279664 21.77 0.402403 23.0003C1.08613 24.2536 2.59796 25 4.45166 25ZM4.45166 23.3137H25.5725C26.8172 23.3137 27.7183 22.9265 28.0601 22.2047C28.4501 21.5043 28.3041 20.5643 27.6453 19.5522L16.4019 2.55577C16.0368 2.00131 15.524 1.66339 14.988 1.66339C14.4271 1.66339 13.8894 2.00131 13.5492 2.55577L2.30423 19.5522C1.64705 20.5643 1.50101 21.5043 1.891 22.2047C2.30423 22.9035 3.20701 23.3137 4.45166 23.3137ZM14.3043 3.01345C14.4503 2.77231 14.7192 2.50656 15.0113 2.50656C15.3423 2.50656 15.5733 2.80195 15.6871 2.94753C15.6994 2.96323 15.7103 2.97719 15.7199 2.98885L26.9383 19.9852C27.4262 20.7333 27.5722 21.3599 27.3283 21.7946C27.0843 22.2277 26.4504 22.4688 25.5476 22.4688H4.45166C3.52398 22.4688 2.89004 22.2277 2.64609 21.7946C2.42703 21.3845 2.54818 20.7333 3.03608 20.0098L14.3043 3.01345ZM14.3033 16.1287H15.8568L16.1641 8.22443H13.9789L14.3033 16.1287ZM15.0715 19.7821C15.3902 19.7821 15.669 19.6682 15.908 19.4406C16.147 19.2016 16.2666 18.9228 16.2666 18.6041C16.2666 18.274 16.147 17.9952 15.908 17.7676C15.669 17.5286 15.3902 17.4091 15.0715 17.4091C14.7529 17.4091 14.474 17.5286 14.235 17.7676C14.0074 17.9952 13.8936 18.274 13.8936 18.6041C13.8936 18.9228 14.0074 19.2016 14.235 19.4406C14.474 19.6682 14.7529 19.7821 15.0715 19.7821Z" fill="#FC412B" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="spdm-row spdm-row--mileage">
+                    <span class="spdm-mileage">000000</span>
+                </div>
+                <div class="spdm-row">
+                    <div class="spdm-turns">
+                        <div class="spdm-light">
+                            <div class="spdm-light__arrow spdm-light__arrow--left">
+                                <div></div>
+                            </div>
+                            <div class="spdm-light__backdrop"></div>
+                        </div>
+                        <div class="spdm-light">
+                            <div class="spdm-light__arrow spdm-light__arrow--right">
+                                <div></div>
+                            </div>
+                            <div class="spdm-light__backdrop"></div>
+                        </div>
+                    </div>
+                    <span class="spdm-speed">0</span>
+                </div>
+                <div class="spdm-row spdm-row--units">
+                    <span class="spdm-units">km/h</span>
+                </div>
+                <div class="spdm-row spdm-row--indicators">
+                    <div class="spdm-engine">
+                        <div class="spdm-engine__icon"></div>
+                    </div>
+                    <div class="spdm-doors">
+                        <div class="spdm-doors__icon"></div>
+                    </div>
+                    <div class="spdm-headlights">
+                        <div class="spdm-headlights__icon"></div>
+                    </div>
+                    <div class="spdm-staging">
+                        <div class="spdm-staging__icon"></div>
+                        <span class="spdm-staging__stage">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="process-hint" class="hint" style="display: none;">
+        <div class="wrapper">
+            <div class="blackout-img"></div>
+            <div class="container">
+                <div class="container__colored-ellipse"></div>
+                <div id="pre-title" class="container__pre-title" style="display: none;"></div>
+                <div id="title" class="container__title" style="display: none;">
+                    <div class="container__title__line"></div>
+                    <span></span>
+                    <div class="container__title__line right"></div>
+                </div>
+                <div id="post-title" class="container__post-title" style="display: none;"></div>
+                <div id="description" class="container__description" style="display: none;"></div>
+                <div class="container__timer">
+                    <div id="timer-title" class="container__timer__title"></div>
+                    <div id="timer-time" class="container__timer__time"></div>
+                    <div id="timer-progress" class="container__timer__progress-bar"></div>
+                </div>
+                <div id="post-description" class="container__post-description" style="display: none;">
+                    <i class="material-icons">info</i>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="keyhint-root">
+        <div class="keyhint-frame">
+            <div class="keyhint-row">
+                <div class="keyhint-text">Используйте клавишу</div>
+                <div class="keyhint-key">
+                    <div class="keyhint-key__box">
+                        <div class="keyhint-key__bg"></div>
+                        <div class="keyhint-key__label"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nhud-root">
+        <div class="nhud-layer">
+            <div class="nhud-logo">
+                <div class="nhud-meta">
+                    <div class="nhud-nick">
+                        <div class="nhud-nick__text">nazik_squad</div>
+                    </div>
+                    <div class="nhud-time">
+                        <div class="nhud-time__text">14:30:23</div>
+                    </div>
+                    <div class="nhud-id">
+                        <div class="nhud-id__text">ID: 0</div>
+                    </div>
+                </div>
+                <img class="nhud-logo__img" src="images/logo.png" alt="Logo" />
+            </div>
+
+            <div class="nhud-health">
+                <div class="nhud-bar__value">76</div>
+                <img class="nhud-health__icon" src="images/hp.png" alt="Health" />
+                <div class="nhud-bar__track">
+                    <div class="nhud-health__fill"></div>
+                </div>
+            </div>
+
+            <div class="nhud-armor">
+                <div class="nhud-bar__value">76</div>
+                <div class="nhud-armor__icon-wrap">
+                    <img class="nhud-armor__icon" src="images/arm.png" alt="Armor" />
+                </div>
+                <div class="nhud-bar__track">
+                    <div class="nhud-armor__fill"></div>
+                </div>
+            </div>
+
+            <div class="nhud-money">
+                <div class="nhud-money__text">999.999.999 ₽</div>
+                <img class="nhud-money__icon" src="images/money.png" alt="Money" />
+            </div>
+
+            <div class="nhud-weapon nhud-weapon--hidden">
+                <img class="nhud-weapon__img" src="images/guns/5.png" alt="Gun" />
+                <div class="nhud-ammo">
+                    <p class="nhud-ammo__text">
+                        <span class="nhud-ammo__current">1</span> <span class="nhud-ammo__max">/25</span>
+                    </p>
+                    <img class="nhud-ammo__icon" src="images/union.png" alt="Bullet" />
+                </div>
+            </div>
+
+            <div class="nhud-radar">
+                <div class="nhud-radar__map"></div>
+                <div class="nhud-hints">
+                    <div class="nhud-hint">
+                        <div class="nhud-hint__key">
+                            <div class="nhud-hint__key-text">F1</div>
+                        </div>
+                        <div class="nhud-hint__label">Помощь</div>
+                    </div>
+                    <div class="nhud-hint nhud-hint--wide">
+                        <div class="nhud-hint__key">
+                            <div class="nhud-hint__key-text">G</div>
+                        </div>
+                        <div class="nhud-hint__label">Сесть на пассажирское сиденье</div>
+                    </div>
+                    <div class="nhud-hint">
+                        <div class="nhud-hint__key">
+                            <div class="nhud-hint__key-text">L</div>
+                        </div>
+                        <div class="nhud-hint__label">Фары</div>
+                    </div>
+                    <div class="nhud-hint">
+                        <div class="nhud-hint__key">
+                            <div class="nhud-hint__key-text">&lt;/&gt;</div>
+                        </div>
+                        <div class="nhud-hint__label">Фары</div>
+                    </div>
+                    <div class="nhud-hint">
+                        <div class="nhud-hint__key">
+                            <div class="nhud-hint__key-text">С</div>
+                        </div>
+                        <div class="nhud-hint__label">Меню транспорта</div>
+                    </div>
+                    <div class="nhud-hint nhud-hint--wide">
+                        <div class="nhud-hint__key">
+                            <div class="nhud-hint__key-text">CTRL</div>
+                        </div>
+                        <div class="nhud-hint__label">Запустить/выключить двигатель</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nhud-location">
+                <img class="nhud-location__icon" src="images/location-svg.svg" alt="Location" />
+                <div class="nhud-location__text">
+                    <div class="nhud-location__city">Арзамас</div>
+                    <div class="nhud-location__street">Проспект Ленина, д. 21А</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="bizw-root">
+        <div class="bizw-panel">
+            <div class="bizw-header">
+                <h2 class="bizw-header__type"></h2>
+                <h1 class="bizw-header__name"></h1>
+            </div>
+
+            <div class="bizw-status">
+                <span class="bizw-status__text"></span>
+            </div>
+
+            <div class="bizw-stats">
+                <div class="bizw-stat">
+                    <span class="bizw-stat__value"></span>
+                    <span class="bizw-stat__label"></span>
+                </div>
+                <div class="bizw-stat">
+                    <span class="bizw-stat__value"></span>
+                    <span class="bizw-stat__label"></span>
+                </div>
+                <div class="bizw-stat">
+                    <span class="bizw-stat__value"></span>
+                    <span class="bizw-stat__label"></span>
+                </div>
+                <div class="bizw-stat">
+                    <span class="bizw-stat__value"></span>
+                    <span class="bizw-stat__label"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="active" class="__main__">
+        <div v-if="data === 'auth'">
+            <p class="caption"><span class="caption-1">АВТОРИЗАЦИЯ</span><br><span class="caption-2">АККАУНТА</span></p>
+            <input v-model="LPass" class="password-input" placeholder="Введите пароль" :type="vpass ? 'text' : 'password'" />
+            <img class="key-password" src="images/svg/key.svg" />
+            <img v-if="vpass && LPass !== ''" class="show-hide__svg" src="images/svg/show.svg" style="top: 29.8vh;" @click="PasswordVisibility();" />
+            <img v-if="!vpass && LPass !== ''" class="show-hide__svg" src="images/svg/hide.svg" @click="PasswordVisibility();" />
+            <div class="button-responce" @click="ResponceLogin();">Авторизоваться</div>
+            <img class="back-ground__people" src="images/svg/bg-people.svg" />
+        </div>
+        <div v-if="data === 'reg'">
+            <p class="caption"><span class="caption-1">РЕГИСТРАЦИЯ</span><br><span class="caption-2">АККАУНТА</span></p>
+            <div class="block-inputs">
+                <input v-for="item in inputs" class="input-reg" :placeholder="item.placeholder" :type="item.type" :key="item.id" v-model="item.inputtext" />
+                <div class="button-responce" style="position: relative; top: 0vh; left: 0vh; margin-bottom: 1.5vh;" @click="ReplaceData('clothes');">Зарегистрироваться</div>
+            </div>
+            <div class="block-inputs" style="pointer-events: none;">
+                <img class="icon-input" src="images/svg/mail.svg" />
+                <img class="icon-input" src="images/svg/key.svg" />
+                <img class="icon-input" src="images/svg/key.svg" style="top: 3.1vh;" />
+                <img class="icon-input" src="images/svg/lightning.svg" style="width: 1.5vh; top: 2.7vh; left: 2.5vh;" />
+            </div>
+            <img v-if="inputs[1].type === 'text' && inputs[1].inputtext !== ''" class="show-hide__svg" src="images/svg/show.svg" style="top: 40.2vh;" @click="PasswordVisibilityReg(1);" />
+            <img v-if="inputs[1].type === 'password' && inputs[1].inputtext !== ''" class="show-hide__svg" src="images/svg/hide.svg" @click="PasswordVisibilityReg(1);" style="top: 40.5vh;" />
+            <img v-if="inputs[2].type === 'text' && inputs[1].inputtext !== ''" class="show-hide__svg" src="images/svg/show.svg" style="top: 50.5vh;" @click="PasswordVisibilityReg(2);" />
+            <img v-if="inputs[2].type === 'password' && inputs[2].inputtext !== ''" class="show-hide__svg" src="images/svg/hide.svg" @click="PasswordVisibilityReg(2);" style="top: 50.8vh;" />
+            <img class="back-ground__people" src="images/svg/bg-people.svg" />
+        </div>
+        <div v-if="data === 'clothes'">
+            <p class="caption"><span class="caption-1">РЕГИСТРАЦИЯ</span><br><span class="caption-2">АККАУНТА</span></p>
+            <p class="appearance-text">Выберите пол и облик персонажа:</p>
+            <div class="button-sex-block">
+                <div class="button-sex" :class="{ 'button-sex-active': sex === 1 }" @click="ReplaceSex(1);">Мужской</div>
+                <div class="button-sex" :class="{ 'button-sex-active_girl': sex === 2 }" @click="ReplaceSex(2);">Женский</div>
+            </div>
+            <div class="clothes-block">
+                <div v-for="item in mskin"
+                    :key="item.id"
+                    v-if="sex == 1"
+                    :class="{ 'clothes-active': clothes === item.id }"
+                    class="skin-block"
+                    @click="ReplaceClothes(item.id);">
+                    <img :src="item.img" />
+                </div>
+
+                <div v-for="item in gskin"
+                    :key="item.id"
+                    v-if="sex == 2"
+                    :class="{ 'clothes-active_girl': clothes === item.id }"
+                    class="skin-block"
+                    @click="ReplaceClothes(item.id);">
+                    <img :src="item.img" />
+                </div>
+            </div>
+            <img class="back-ground__people" src="images/svg/bg-people.svg" />
+            <div class="button-responce" style="top: 83vh;" @click="ReplaceData('responce-reg');">Зарегистрироваться</div>
+        </div>
+        <img class="__bg-shadow__" src="images/svg/bg-shadow.svg" />
+        <img class="back-ground__people-shadow" src="images/svg/shadow-skins.svg" />
+        <div class="notify-block">
+            <div :class="['notify', 'notify-' + item.type]" v-for="item in notify" :key="item.id">
+                {{ item.name }}<span>{{ item.text }}</span>
+                <img src="images/svg/warning.svg">
+            </div>
+        </div>
+    </div>
+    <script>
+    window.cef = window.cef || {
+        emit: function (eventName, data) {
+            console.log(`[cef.emit] Event: ${eventName}, Data:`, data);
+        },
+        on: function (eventName, callback) {
+            console.log(`[cef.on] Listening for: ${eventName}`);
+        }
+    };
+    </script>
+    <script src="script/vue.js"></script>
+    <script src="script/key-hold.js"></script>
+    <script src="script/auth.js"></script>
+    <script src="script/chat.js"></script>
+    <script src="script/speedometer.js"></script>
+    <script src="script/dialogs.js"></script>
+    <script src="script/interface-hud.js"></script>
+    <script src="script/biz-info.js"></script>
+    <script src="script/notify.js"></script>
+    <script src="script/hints.js"></script>
+    <script src="script/main.js"></script>
+</body>
+
+</html>
